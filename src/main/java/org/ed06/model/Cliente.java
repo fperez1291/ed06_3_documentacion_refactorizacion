@@ -1,6 +1,7 @@
 package org.ed06.model;
 
 public class Cliente {
+    public static final int NOMBRE_LONGITUD_MIN = 3;
     public int id;
     public String nombre;
     public String dni;
@@ -23,7 +24,7 @@ public class Cliente {
 
     public static boolean validarNombre(String nombre) {
         // Comprobamos que el nombre no sea nulo, esté vacio y tenga al menos 3 caracteres eliminando espacios inciales y finales
-        if (nombre == null || nombre.trim().length() < 3) {
+        if (nombre == null || nombre.trim().length() < NOMBRE_LONGITUD_MIN) {
             throw new IllegalArgumentException("El nombre no es válido");
         }
         return true;
