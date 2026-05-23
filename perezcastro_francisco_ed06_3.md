@@ -24,51 +24,137 @@ Una vez haya pulsado sobre `Configure...`, le aparecerá la siguiente ventana.
 
 ![Ventana de Inspección](img/inspeccion/inspection-window.png)
 
-Deberá clickar sobre la barra de búsqueda para buscar *magic numbers* y seleccionará el ítem `Java/Abstraction issues/Magic Number`. Luego pulse el botón `Apply`y posteriormente el botón `OK` para guardar el cambio y regresar a la ventana anterior. Una vez vea la ventana anterior, pulse el botón `Analyze` para comenzar el análisis.
+Deberá clickar sobre la barra de búsqueda para buscar *magic numbers* y seleccionará el ítem `Magic Number`. Luego pulse el botón `Apply`y posteriormente el botón `OK` para guardar el cambio y regresar a la ventana anterior. Una vez vea la ventana anterior, pulse el botón `Analyze` para comenzar el análisis.
 
 ![Inspección de los magic numbers activa](img/inspeccion/magic-number-inspection-activate.png)
+
+> [!WARNING]
+> El ejemplo del ítem `Magic Number` es aplicable a otros ítems, tales como `Feature envy`, `'switch' statement`. Este último también se usará en la realización de esta tarea.
 
 Una vez termine el análisis, obtendremos la información mostrada en la siguiente imagen. Dicha información nos será útil para detectar code smells en el código del proyecto.
 
 ![Análsis finalizado](img/inspeccion/analisis-finalizado.png)
 
-## 1. Clase `Hotel`
+## 1. Clase `Cliente`
 
-### Código inalcanzable
+### Visibilidad de los atributos
 
-El IDE, nada más abrir el archivo `Hotel.java`, nos indica que hay un error en la línea 112 debido a un `Unreachable statement`. El propio IDE nos indica que el `return 0;` es inalcanzable, por lo que se procede a su eliminación.
+Los atributos de la clase son públicos. Hay que cambiar su visibilidad a privado para cumplir con los estándares del **Clean Code** y los principios de la encapsulación, y añadir el getter correspondiente con modificador `public`.
 
 - **Antes de refactorizar:**
 
-![Error línea 112](img/aptdo1/before_linea-112.png)
+![Atributos antes de refactorizar](img/aptdo1/before_atributos-publicos.png)
+
+- **Refactorización:** la refactorización debe realizarse atributo a atributo.
+
+![Refactorización de los atributos](img/aptdo1/refactor_atributo-publico.png)
+
+Le saldrá la siguiente ventana. Marcamos todos los atributos públicos (menos `esVip`) y generamos únicamente la opción del `Get access`. Luego pulsaremos el botón `Refactor`.
+
+![Paso dos de la refactorización](img/aptdo1/refactor_atributo-publico_2.png)
+
+Para el caso del atributo `esVip` será necesario crear también su setter.
+
+![Paso dos de la refactorización - esVip](img/aptdo1/refactor_atributo-publico_3.png)
 
 - **Después de refactorizar:**
 
-![Línea 112 refactorizada](img/aptdo1/after_linea-112.png)
+![Atributos refactorizados](img/aptdo1/after_atributos-publicos.png)
 
-A mayores, se detecta que el método mostrado a continuación no es utilizado. En este caso optamos por dejarlo, asumiendo que se trata de una deuda técnica a futuro, es decir, asumiendo que se trata de una funcionalidad del programa que no se ha terminado de integrar al software.
+Se muestra a continuación el código generado al refactorizar.
 
 ```java
-public void registrarHabitaciones(List<String> tipos, List<Double> preciosBase) {
-    for(int i = 0; i < tipos.size(); i++) {
-        Habitacion habitacion = new Habitacion(habitaciones.size() + 1, tipos.get(i), preciosBase.get(i));
-        habitaciones.add(habitacion);
-        reservasPorHabitacion.put(habitacion.getNumero(), new ArrayList<>());
-    }
+public int getId() { 
+    return id;
+}
+public String getNombre() {
+    return nombre;
+}
+public String getDni() {
+    return dni;
+}
+public String getEmail() {
+    return email;
+}
+public boolean isEsVip() {
+    return esVip;
+}
+public void setEsVip(boolean esVip) {
+    this.esVip = esVip;
 }
 ```
 
-### Duplicación de código
+### Magic number
 
-Analizando más en detalle el método `registrarHabitaciones(List<String> tipos, List<Double> preciosBase)`, nos damos cuenta que el contenido del bucle `for` está duplicado, pues equivale al método `registrarHabitacion(String tipo, double precioBase)`.
+Se ha detectado un magic number en el método `validarNombre`: el número 3 en la condición de la sentencia `if`, que define el tamaño mínimo (sin espacios) que un nombre debe tener para ser válido.
 
 - **Antes de refactorizar:**
 
-![Métodos registrarHabitacion y registrarHabitaciones](img/aptdo1/before_registrarHabitaciones.png)
+![Método validarNombre sin refactorizar](img/aptdo1/before_magic-number.png)
+
+- **Refactorización:**
+
+![Refactorización del método validarNombre](img/aptdo1/refactor_magic-number.png)
 
 - **Después de refactorizar:**
 
-![Método registrarHabitaciones refactorizado](img/aptdo1/after_registrarHabitaciones.png)
+![Método validarNombre refactorizado](img/aptdo1/after_magic-number.png)
+
+Si vamos a lod métodoe `validarEmail` y `validarDni`, encontramos una cadena de texto utilizada para validar el email y el DNI (respectivamente) del cliente que podemos considerar *magic numbers*. Procedemos a extraerlas como constantes al igual que antes.
+
+- **Antes de refactorizar:**
+
+![Métodos validarEmail y validarDni sin refactorizar](img/aptdo1/before_validarEmail_validarDni.png)
+
+- **Refactorización:**
+
+![Refactorización del método validarEmail](img/aptdo1/refactor_validarEmail.png)
+![Refactorización del método validarDni](img/aptdo1/refactor_validarDni.png)
+
+- **Después de refactorizar:**
+
+![Método validarEmail refactorizado](img/aptdo1/after_validarEmail.png)
+![Método validarDni refactorizado](img/aptdo1/after_validarDni.png)
+
+### Eliminando redundancias
+
+El constructor de la clase `Cliente` es el siguiente:
+
+```java
+public Cliente(int id, String nombre, String dni, String email, boolean esVip) {
+    this.id = id;
+    if(validarNombre(nombre)) {
+        this.nombre = nombre;
+    }
+    if(validarDni(dni)) {
+        this.dni = dni;
+    }
+    if(validarEmail(email)) {
+        this.email = email;
+    }
+    this.setEsVip(esVip);
+}
+```
+
+Si echamos un vistazo al código, podemos ver que los tres métodos de validación solo pueden hacer una de dos cosas:
+
+- Devolver `true` si el dato es válido
+- Lanzar una excepción informando al usuario de que el dato no es válido
+
+En resumen, resulta redundante encerrar la llamada al método en la condición de una sentencia `if`, pues lo que haya después de la ejecución de la llamada se ejecutará si y sólo si el dato es válido. Por tanto, se elimina dicha redundancia, siendo el siguiente fragmento el código refactorizado.
+
+```java
+public Cliente(int id, String nombre, String dni, String email, boolean esVip) {
+    this.id = id;
+    validarNombre(nombre);
+    this.nombre = nombre;
+    validarDni(dni);
+    this.dni = dni;
+    validarEmail(email);
+    this.email = email;
+    this.setEsVip(esVip);
+}
+```
 
 ## 2. Clase `Reserva`
 
@@ -104,47 +190,43 @@ public void reservar() {
 }
 ```
 
-## 4. Clase `Cliente`
+## 4. Clase `Hotel`
 
-En la clase `Cliente` se ha detectado un posible magic number en el método `validarNombre(String nombre)`: el número 3 en la condición de la sentencia `if`, que define el tamaño mínimo (sin espacios) que un nombre debe tener para ser válido.
+### Código inalcanzable
+
+El IDE, nada más abrir el archivo `Hotel.java`, nos indica que hay un error en la línea 112 debido a un `Unreachable statement`. El propio IDE nos indica que el `return 0;` es inalcanzable, por lo que se procede a su eliminación.
+
+- **Antes de refactorizar:**
+
+![Error línea 112](img/aptdo4/before_linea-112.png)
+
+- **Después de refactorizar:**
+
+![Línea 112 refactorizada](img/aptdo4/after_linea-112.png)
+
+A mayores, se detecta que el método mostrado a continuación no es utilizado. En este caso optamos por dejarlo, asumiendo que se trata de una deuda técnica a futuro, es decir, asumiendo que se trata de una funcionalidad del programa que no se ha terminado de integrar al software.
 
 ```java
-public static boolean validarNombre(String nombre) {
-        // Comprobamos que el nombre no sea nulo, esté vacio y tenga al menos 3 caracteres eliminando espacios inciales y finales
-        if (nombre == null || nombre.trim().length() < 3) {
-            throw new IllegalArgumentException("El nombre no es válido");
-        }
-        return true;
+public void registrarHabitaciones(List<String> tipos, List<Double> preciosBase) {
+    for(int i = 0; i < tipos.size(); i++) {
+        Habitacion habitacion = new Habitacion(habitaciones.size() + 1, tipos.get(i), preciosBase.get(i));
+        habitaciones.add(habitacion);
+        reservasPorHabitacion.put(habitacion.getNumero(), new ArrayList<>());
     }
-```
-
-Por otra parte, se ha detectado varios *Primitive Obsessions* en los atributos de la clase. Los atributos afectados son `email` y `dni`. A pesar de que se realiza la validación en el constructor de la clase, estarían mejor modelados mediante una clase.
-
-```java
-public class Cliente {
-    public int id;
-    public String nombre;
-    public String dni;
-    public String email;
-    public boolean esVip;
-    
-    public Cliente(int id, String nombre, String dni, String email, boolean esVip) {
-        this.id = id;
-        if(validarNombre(nombre)) {
-            this.nombre = nombre;
-        }
-        if(validarDni(dni)) {
-            this.dni = dni;
-        }
-        if(validarEmail(email)) {
-            this.email = email;
-        }
-        this.esVip = esVip;
-    }
-    //...
 }
 ```
 
-Como podrá haber deducido, `nombre` también podría haber sido mencionado como un code smell, pero... ¿por qué no ha sido mencionado? Es muy simple. El atributo `nombre` no modela un concepto del mundo real, pues es una característica del cliente. Por tanto, no se considera.
+### Duplicación de código
+
+Analizando más en detalle el método `registrarHabitaciones(List<String> tipos, List<Double> preciosBase)`, nos damos cuenta que el contenido del bucle `for` está duplicado, pues equivale al método `registrarHabitacion(String tipo, double precioBase)`.
+
+- **Antes de refactorizar:**
+
+![Métodos registrarHabitacion y registrarHabitaciones](img/aptdo4/before_registrarHabitaciones.png)
+
+- **Refactorización:** reescritura a mano.
+- **Después de refactorizar:**
+
+![Método registrarHabitaciones refactorizado](img/aptdo4/after_registrarHabitaciones.png)
 
 ## 5. Clase `Main`

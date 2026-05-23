@@ -1,7 +1,6 @@
 package org.ed06.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Reserva {
     private int id;
@@ -55,7 +54,7 @@ public class Reserva {
         double pf = pb;
 
         // Si el cliente es VIP, aplicamos un descuento del 10%
-        if (cliente.esVip) {
+        if (cliente.isEsVip()) {
             pf *= 0.9;
         }
 
@@ -71,7 +70,7 @@ public class Reserva {
     public void mostrarReserva() {
         System.out.println("Reserva #" + id);
         System.out.println("Habitación #" + habitacion.getNumero() + " - Tipo: " + habitacion.getTipo() + " - Precio base: " + habitacion.getPrecioBase());
-        System.out.println("Cliente: " + cliente.nombre);
+        System.out.println("Cliente: " + cliente.getNombre());
         System.out.println("Fecha de inicio: " + fechaInicio.toString());
         System.out.println("Fecha de fin: " + fechaFin.toString());
         System.out.printf("Precio total: %.2f €\n", precioTotal);

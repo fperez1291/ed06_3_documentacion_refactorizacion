@@ -27,7 +27,9 @@ public class Hotel {
 
     public void registrarHabitaciones(List<String> tipos, List<Double> preciosBase) {
         for(int i = 0; i < tipos.size(); i++) {
-            registrarHabitacion(tipos.get(i), preciosBase.get(i));
+            String tipo = tipos.get(i);
+            double precioBase = preciosBase.get(i);
+            registrarHabitacion(tipo, precioBase);
         }
     }
 
@@ -37,7 +39,7 @@ public class Hotel {
                 System.out.println("Habitación #" + habitacion.getNumero() + " - Tipo: " + habitacion.getTipo() + " - Precio base: " + habitacion.getPrecioBase());
             }
         }
-    }
+    }// feature envy
 
     public Habitacion getHabitacion(int numero) {
         for(Habitacion habitacion : habitaciones) {
@@ -76,9 +78,9 @@ public class Hotel {
                                     }
                                 }
                             }
-                            if(numReservas > 3 && !cliente.esVip) {
-                                cliente.esVip = true;
-                                System.out.println("El cliente " + cliente.nombre + " ha pasado a ser VIP");
+                            if(numReservas > 3 && !cliente.isEsVip()) {
+                                cliente.setEsVip(true);
+                                System.out.println("El cliente " + cliente.getNombre() + " ha pasado a ser VIP");
                             }
 
                             // Creamos la reserva
@@ -113,20 +115,20 @@ public class Hotel {
         reservasPorHabitacion.forEach((key, value) -> {
             System.out.println("Habitación #" + key);
             value.forEach(reserva -> System.out.println(
-                "Reserva #" + reserva.getId() + " - Cliente: " + reserva.getCliente().nombre
+                "Reserva #" + reserva.getId() + " - Cliente: " + reserva.getCliente().getNombre()
                     + " - Fecha de entrada: " + reserva.getFechaInicio()
                     + " - Fecha de salida: " + reserva.getFechaFin()));
         });
-    }
+    } // feature envy
 
     public void listarClientes() {
         for(Cliente cliente : clientes.values()) {
-            System.out.println("Cliente #" + cliente.id + " - Nombre: " + cliente.nombre + " - DNI: " + cliente.dni + " - VIP: " + cliente.esVip);
+            System.out.println("Cliente #" + cliente.getId() + " - Nombre: " + cliente.getNombre() + " - DNI: " + cliente.getDni() + " - VIP: " + cliente.isEsVip());
         }
-    }
+    } // feature envy
 
     public void registrarCliente(String nombre, String email, String dni, boolean esVip) {
         Cliente cliente = new Cliente(clientes.size() + 1, nombre, dni, email, esVip);
-        clientes.put(cliente.id, cliente);
+        clientes.put(cliente.getId(), cliente);
     }
 }

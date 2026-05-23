@@ -1,25 +1,25 @@
 package org.ed06.model;
 
 public class Cliente {
-    public static final int NOMBRE_LONGITUD_MIN = 3;
-    public int id;
-    public String nombre;
-    public String dni;
-    public String email;
-    public boolean esVip;
+    public static final int    NOMBRE_LONGITUD_MIN    = 3;
+    public static final String REGEX_VALIDACION_EMAIL = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
+    public static final String REGEX_VALIDACION_DNI   = "[0-9]{8}[A-Z]";
+
+    private int     id;
+    private String  nombre;
+    private String  dni;
+    private String  email;
+    private boolean esVip;
 
     public Cliente(int id, String nombre, String dni, String email, boolean esVip) {
         this.id = id;
-        if(validarNombre(nombre)) {
-            this.nombre = nombre;
-        }
-        if(validarDni(dni)) {
-            this.dni = dni;
-        }
-        if(validarEmail(email)) {
-            this.email = email;
-        }
-        this.esVip = esVip;
+        validarNombre(nombre);
+        this.nombre = nombre;
+        validarDni(dni);
+        this.dni = dni;
+        validarEmail(email);
+        this.email = email;
+        this.setEsVip(esVip);
     }
 
     public static boolean validarNombre(String nombre) {
@@ -31,17 +31,40 @@ public class Cliente {
     }
 
     public static boolean validarEmail(String email) {
-        if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+        if (!email.matches(REGEX_VALIDACION_EMAIL)) {
             throw new IllegalArgumentException("El email no es válido");
         }
         return true;
     }
 
     public static boolean validarDni(String dni) {
-        if (!dni.matches("[0-9]{8}[A-Z]")) {
+        if (!dni.matches(REGEX_VALIDACION_DNI)) {
             throw new IllegalArgumentException("El DNI no es válido");
         }
         return true;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isEsVip() {
+        return esVip;
+    }
+
+    public void setEsVip(boolean esVip) {
+        this.esVip = esVip;
+    }
 }
