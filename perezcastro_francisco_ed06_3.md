@@ -2,37 +2,85 @@
 
 En el siguiente documento se describen todos los *code smells* detectados e identificados junto con su refactorización. Estos serán clasificados conforme al orden en el que se presentan en los apuntes de la asignatura.
 
-## 1. Identificación de los code smells
-
 Empezaremos a identificar los code smells siguiendo el orden siguiente:
 
-1. Clase `Cliente`
-2. Clase `Habitacion`
-3. Clase `Hotel`
-4. Clase `Reserva`
+1. Clase `Hotel`
+2. Clase `Reserva`
+3. Clase `Habitacion`
+4. Clase `Cliente`
 5. Clase `Main`
+
+## Inspección del proyecto con IntelliJ IDEA
 
 Para detectar los code smells haremos uso de la opción `Analyze > Inspect Code...` del menú asociado al click derecho del ratón.
 
-![Opción de inspección de código](img/aptdo1/analyze-inspect_code-option.png)
+![Opción de inspección de código](img/inspeccion/analyze-inspect_code-option.png)
 
 Una vez seleccionada la opción, le saldrá la siguiente ventana. Deberá seleccionar la opción `Whole project` y pulsar con el ratón sobre `Configure...`.
 
-![Especificando el ámbito de análisis](img/aptdo1/specify-inspection-scope.png)
+![Especificando el ámbito de análisis](img/inspeccion/specify-inspection-scope.png)
 
 Una vez haya pulsado sobre `Configure...`, le aparecerá la siguiente ventana. 
 
-![Ventana de Inspección](img/aptdo1/inspection-window.png)
+![Ventana de Inspección](img/inspeccion/inspection-window.png)
 
 Deberá clickar sobre la barra de búsqueda para buscar *magic numbers* y seleccionará el ítem `Java/Abstraction issues/Magic Number`. Luego pulse el botón `Apply`y posteriormente el botón `OK` para guardar el cambio y regresar a la ventana anterior. Una vez vea la ventana anterior, pulse el botón `Analyze` para comenzar el análisis.
 
-![Inspección de los magic numbers activa](img/aptdo1/magic-number-inspection-activate.png)
+![Inspección de los magic numbers activa](img/inspeccion/magic-number-inspection-activate.png)
 
 Una vez termine el análisis, obtendremos la información mostrada en la siguiente imagen. Dicha información nos será útil para detectar code smells en el código del proyecto.
 
-![Análsis finalizado](img/aptdo1/analisis-finalizado.png)
+![Análsis finalizado](img/inspeccion/analisis-finalizado.png)
 
-### 1.1. Clase `Cliente`
+## 1. Clase `Hotel`
+
+### Código inalcanzable
+
+El IDE, nada más abrir el archivo `Hotel.java`, nos indica que hay un error en la línea 112 debido a un `Unreachable statement`. El propio IDE nos indica que el `return 0;` es inalcanzable, por lo que se procede a su eliminación.
+
+- **Antes de refactorizar:**
+
+![Error línea 112](img/aptdo1/before_linea-112.png)
+
+- **Después de refactorizar:**
+
+![Línea 112 refactorizada](img/aptdo1/after_linea-112.png)
+
+## 2. Clase `Reserva`
+
+## 3. Clase `Habitacion`
+
+Se ha detectado un code smell de tipo Object-Oriented Abuser en la línea 36. El siguiente fragmento de código muestra un switch statement que indica que el código no está utilizando correctamente la herencia o el polimorfismo.
+
+```java
+// Método que usa un switch para determinar el número máximo de huéspedes
+public double obtenerNumMaxHuespedes() {
+    return switch (tipo) {
+        case "SIMPLE" -> 1;
+        case "DOBLE" -> 3;
+        case "SUITE" -> 4;
+        case "LITERAS" -> 8;
+        default -> 1;
+    };
+}
+```
+
+Además, este método no se utiliza nunca, tal y como se puede ver en la imagen siguiente (está marcado con `no usages`).
+
+![Método obtenerNumMaxHuespedes](img/aptdo3/metodo-obtenerNumMaxHuespedes.png)
+
+Finalmente, tenemos el método `reservar()`, cuyo aspecto es un tanto sospechoso. Sion embargo, en el mismo código hay un comentario que nos indica que la forma de festionar la disponibilidad de una habitación está pendiente de modificaciones. Por ahora, no vamos a considerar acciones sobre dicho método.
+
+```java
+public void reservar() {
+    if (disponible) {
+        System.out.println("Habitación #" + numero + " ya reservada");
+    }
+    disponible = true;
+}
+```
+
+## 4. Clase `Cliente`
 
 En la clase `Cliente` se ha detectado un posible magic number en el método `validarNombre(String nombre)`: el número 3 en la condición de la sentencia `if`, que define el tamaño mínimo (sin espacios) que un nombre debe tener para ser válido.
 
@@ -75,40 +123,4 @@ public class Cliente {
 
 Como podrá haber deducido, `nombre` también podría haber sido mencionado como un code smell, pero... ¿por qué no ha sido mencionado? Es muy simple. El atributo `nombre` no modela un concepto del mundo real, pues es una característica del cliente. Por tanto, no se considera.
 
-### 1.2. Clase `Habitacion`
-
-Se ha detectado un code smell de tipo Object-Oriented Abuser en la línea 36. El siguiente fragmento de código muestra un switch statement que indica que el código no está utilizando correctamente la herencia o el polimorfismo.
-
-```java
-// Método que usa un switch para determinar el número máximo de huéspedes
-public double obtenerNumMaxHuespedes() {
-    return switch (tipo) {
-        case "SIMPLE" -> 1;
-        case "DOBLE" -> 3;
-        case "SUITE" -> 4;
-        case "LITERAS" -> 8;
-        default -> 1;
-    };
-}
-```
-
-Además, este método no se utiliza nunca, tal y como se puede ver en la imagen siguiente (está marcado con `no usages`).
-
-![Método obtenerNumMaxHuespedes](img/aptdo1/metodo-obtenerNumMaxHuespedes.png)
-
-Finalmente, tenemos el método `reservar()`, cuyo aspecto es un tanto sospechoso. Sion embargo, en el mismo código hay un comentario que nos indica que la forma de festionar la disponibilidad de una habitación está pendiente de modificaciones. Por ahora, no vamos a considerar acciones sobre dicho método.
-
-```java
-public void reservar() {
-    if (disponible) {
-        System.out.println("Habitación #" + numero + " ya reservada");
-    }
-    disponible = true;
-}
-```
-
-## 1.3. Clase `Hotel`
-
-## 1.4. Clase `Reserva`
-
-## 1.5. Clase `Main`
+## 5. Clase `Main`

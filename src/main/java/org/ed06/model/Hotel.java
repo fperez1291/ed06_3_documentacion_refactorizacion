@@ -109,7 +109,6 @@ public class Hotel {
             return -4;
         }
 
-        return 0;
     }
 
     public void listarReservas() {
