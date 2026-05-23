@@ -29,7 +29,7 @@ Deberá clickar sobre la barra de búsqueda para buscar *magic numbers* y selecc
 ![Inspección de los magic numbers activa](img/inspeccion/magic-number-inspection-activate.png)
 
 > [!NOTE]
-> El ejemplo del ítem `Magic Number` es aplicable a otros ítems, tales como `Feature envy`, `'switch' statement`. Este último también se usará en la realización de esta tarea.
+> El ejemplo del ítem `Magic Number` es aplicable a otros ítems, tales como `Feature envy`, `'switch' statement`. Estos últimos también se usarán en la realización de esta tarea.
 
 Una vez termine el análisis, obtendremos la información mostrada en la siguiente imagen. Dicha información nos será útil para detectar code smells en el código del proyecto.
 
