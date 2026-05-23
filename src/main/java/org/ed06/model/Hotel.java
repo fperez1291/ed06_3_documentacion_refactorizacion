@@ -27,9 +27,7 @@ public class Hotel {
 
     public void registrarHabitaciones(List<String> tipos, List<Double> preciosBase) {
         for(int i = 0; i < tipos.size(); i++) {
-            Habitacion habitacion = new Habitacion(habitaciones.size() + 1, tipos.get(i), preciosBase.get(i));
-            habitaciones.add(habitacion);
-            reservasPorHabitacion.put(habitacion.getNumero(), new ArrayList<>());
+            registrarHabitacion(tipos.get(i), preciosBase.get(i));
         }
     }
 

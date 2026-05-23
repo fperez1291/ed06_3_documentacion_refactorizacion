@@ -46,6 +46,30 @@ El IDE, nada más abrir el archivo `Hotel.java`, nos indica que hay un error en 
 
 ![Línea 112 refactorizada](img/aptdo1/after_linea-112.png)
 
+A mayores, se detecta que el método mostrado a continuación no es utilizado. En este caso optamos por dejarlo, asumiendo que se trata de una deuda técnica a futuro, es decir, asumiendo que se trata de una funcionalidad del programa que no se ha terminado de integrar al software.
+
+```java
+public void registrarHabitaciones(List<String> tipos, List<Double> preciosBase) {
+    for(int i = 0; i < tipos.size(); i++) {
+        Habitacion habitacion = new Habitacion(habitaciones.size() + 1, tipos.get(i), preciosBase.get(i));
+        habitaciones.add(habitacion);
+        reservasPorHabitacion.put(habitacion.getNumero(), new ArrayList<>());
+    }
+}
+```
+
+### Duplicación de código
+
+Analizando más en detalle el método `registrarHabitaciones(List<String> tipos, List<Double> preciosBase)`, nos damos cuenta que el contenido del bucle `for` está duplicado, pues equivale al método `registrarHabitacion(String tipo, double precioBase)`.
+
+- **Antes de refactorizar:**
+
+![Métodos registrarHabitacion y registrarHabitaciones](img/aptdo1/before_registrarHabitaciones.png)
+
+- **Después de refactorizar:**
+
+![Método registrarHabitaciones refactorizado](img/aptdo1/after_registrarHabitaciones.png)
+
 ## 2. Clase `Reserva`
 
 ## 3. Clase `Habitacion`
