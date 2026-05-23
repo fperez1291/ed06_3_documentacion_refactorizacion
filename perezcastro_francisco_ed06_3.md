@@ -84,7 +84,7 @@ public void setEsVip(boolean esVip) {
 }
 ```
 
-### Magic number
+### Magic numbers
 
 Se ha detectado un magic number en el método `validarNombre`: el número 3 en la condición de la sentencia `if`, que define el tamaño mínimo (sin espacios) que un nombre debe tener para ser válido.
 
