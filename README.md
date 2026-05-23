@@ -1,6 +1,6 @@
 # ED06_3 - Refactorización de proyecto Java en IntelliJ IDEA
 
-> [!INFO]
+> [!INFO]  
 > Este documento describe la tarea a realizar. En otras palabras, se trata de la descripción dada en el enunciado de la tarea.
 
 ## Introducción
