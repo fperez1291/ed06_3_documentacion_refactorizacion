@@ -56,8 +56,7 @@ public class Reserva {
         //calculamos los días de la reserva
         int numDiasReserva = fechaFin.getDayOfYear() - fechaInicio.getDayOfYear();
         // Calculamos el precio base de la habitación por el número de noches de la reserva
-        double precioBase = habitacion.getPrecioBase() * numDiasReserva;
-        double precioFinal = precioBase;
+        double precioFinal = habitacion.getPrecioBase() * numDiasReserva;
 
         precioFinal = cliente.aplicarDescuentoClienteVIP(precioFinal);
 

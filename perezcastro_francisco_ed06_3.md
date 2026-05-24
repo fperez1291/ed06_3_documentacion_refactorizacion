@@ -271,6 +271,13 @@ private static double aplicarDescuentoAdicional(int numDiasReserva, double preci
 }
 ```
 
+#### Variable redundante
+
+Se detecta que la variable `precioBase` es redundante. Se procede a refactorizarla.
+
+![alt text](img/aptdo2/refactor_variable-redundante.png)
+![alt text](img/aptdo2/after_variable-redundante.png)
+
 ### Método `mostrarReserva()`
 
 #### Feature envy
@@ -506,3 +513,275 @@ Hay dos fragmentos del método que podemos extraer, creando un nuevo método.
 Estos dos métodos contienen cada uno un encadenamiento de llamadas, pero en esta clase tiene sentido que se encadenen algunas operaciones, por lo que se dejan como están.
 
 ## 5. Clase `Main`
+
+### Carga de datos
+
+Nada más entrar en el método `main()` podemos ver que se registran algunas habitaciones y algunos clientes. Vamos a extraer ambos fragentos para posicionarlos en la clase `Hotel`, evitando así el encadenamiento de llamadas.
+
+- **Antes de refactorizar:**
+
+![alt text](img/aptdo5/before_carga-datos.png)
+
+- **Refactorización:**
+
+![alt text](img/aptdo5/refactor_carga-datos_1.png)
+![alt text](img/aptdo5/refactor_carga-datos_2.png)
+
+Procedemos a mover el método extraído a la clase `Hotel`:
+
+![alt text](img/aptdo5/refactor_carga-datos_3.png)
+![alt text](img/aptdo5/refactor_carga-datos_4.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo5/after_carga-datos.png)
+
+### Operaciones del menú
+
+Podemos ver que en cada sentencia `case` del método `main()` están todas las operaciones "a pelo", en lugar de estar separadas en métodos. Procedemos a extraerlas a métodos y reubicarlas si es necesario.
+
+#### Opción *Registrar habitación*
+
+- **Antes de refactorizar:**
+
+![alt text](img/aptdo5/before_opcion-registrar-habitacion.png)
+
+- **Refactorización:**
+
+![alt text](img/aptdo5/refactor_opcion-registrar-habitacion.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo5/after_opcion-registrar-habitacion.png)
+
+#### Opción *Reservar habitación*
+
+- **Antes de refactorizar:**
+
+![alt text](img/aptdo5/before_opcion-reservar-habitacion.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo5/refactor_opcion-reservar-habitacion_1.png)
+
+Se puede seguir refactorizando, extrayendo la construcción de la fecha de entrada a un método externo.
+
+![alt text](img/aptdo5/refactor_opcion-reservar-habitacion_2.png)
+
+Al refactrorizar, el propio IDE nos sugiere crear un método común para las dos peticiones de fecha (la de entrada y la de salida), por lo que la aceptamos.
+
+![alt text](img/aptdo5/refactor_opcion-reservar-habitacion_3.png)
+
+Nos genera el siguiente código:
+
+```java
+private static LocalDate pedirFecha(String x, String x1, String x2) {
+    System.out.println(x);
+    int anioEntrada = scanner.nextInt();
+    scanner.nextLine();
+
+    System.out.println(x1);
+    int mesEntrada = scanner.nextInt();
+    scanner.nextLine();
+
+    System.out.println(x2);
+    int diaEntrada = scanner.nextInt();
+    scanner.nextLine();
+
+    LocalDate fechaEntrada = LocalDate.of(anioEntrada, mesEntrada, diaEntrada);
+    return fechaEntrada;
+}
+```
+
+Renombraremos parámetros y variables con la opción `Reformat > Reanme...`, obteniendo el siguiente código:
+
+![alt text](img/aptdo5/refactor_opcion-reservar-habitacion_4.png)
+
+Si nos damos cienta, la variable `fecha` es redundante, por lo que también la refactorizamos.
+
+![alt text](img/aptdo5/refactor_opcion-reservar-habitacion_5.png)
+
+Nos queda como código final el siguiente:
+
+```java
+private static void reservarHabitacion(Hotel hotel) {
+    String tipo;
+    System.out.println("Introduce el id del cliente: ");
+    int clienteId = scanner.nextInt();
+
+    System.out.println("Introduce el tipo de habitación (SIMPLE, DOBLE, SUITE): ");
+    tipo = scanner.next();
+
+    LocalDate fechaEntrada = pedirFecha(
+        "Introduce la fecha de entrada (año): ",
+        "Introduce la fecha de entrada (mes): ",
+        "Introduce la fecha de entrada (día): ");
+
+    LocalDate fechaSalida = pedirFecha(
+        "Introduce la fecha de salida (año): ",
+        "Introduce la fecha de salida (mes): ",
+        "Introduce la fecha de salida (día): ");
+
+    int numeroHabitacion = hotel.reservarHabitacion(clienteId, tipo, fechaEntrada,
+        fechaSalida);
+    System.out.println("Datos de la habitacion");
+    Habitacion habitacion = hotel.getHabitacion(numeroHabitacion);
+    System.out.println(
+        "Habitación #" + habitacion.getNumero() + " - Tipo: " + habitacion.getTipo()
+        + " - Precio base: " + habitacion.getPrecioBase());
+    System.out.println("Número de habitación reservada: " + numeroHabitacion);
+}
+
+private static LocalDate pedirFecha(String peticionAnio, String peticionMes, String peticionDia) {
+    System.out.println(peticionAnio);
+    int anio = scanner.nextInt();
+    scanner.nextLine();
+
+    System.out.println(peticionMes);
+    int mes = scanner.nextInt();
+    scanner.nextLine();
+
+    System.out.println(peticionDia);
+    int dia = scanner.nextInt();
+    scanner.nextLine();
+
+    return LocalDate.of(anio, mes, dia);
+}
+```
+
+#### Opción *Registrar cliente*
+
+- **Antes de refactorizar:** Se copia directamente el código fuente debido a la extensión de la operación:
+
+```java
+String nombre;
+String email;
+String dni;
+
+while(true) {
+    try {
+        System.out.println("Introduce el nombre del cliente: ");
+        nombre = scanner.next();
+        Cliente.validarNombre(nombre);
+        break;
+    } catch (IllegalArgumentException e) {
+        System.out.println("Nombre no válido. Inténtalo de nuevo.");
+    }
+}
+while (true) {
+    try {
+        System.out.println("Introduce el email del cliente: ");
+        email = scanner.next();
+        Cliente.validarEmail(email);
+        break;
+    } catch (IllegalArgumentException e) {
+        System.out.println("Email no válido. Inténtalo de nuevo.");
+    }
+}
+while (true) {
+    try {
+        System.out.println("Introduce el DNI del cliente: ");
+        dni = scanner.next();
+        Cliente.validarDni(dni);
+        break;
+    } catch (IllegalArgumentException e) {
+        System.out.println("DNI no válido. Inténtalo de nuevo.");
+    }
+}
+System.out.println("¿Es VIP? (true/false): ");
+boolean esVip = scanner.nextBoolean();
+hotel.registrarCliente(nombre, email, dni, esVip);
+```
+
+![alt text](img/aptdo5/refactor_opcion-registrar-cliente_1.png)
+
+Este nuevo método puede refactorizarse en métodos más pequeños, pues es demasiado largo.
+
+![alt text](img/aptdo5/refactor_opcion-registrar-cliente_2.png)
+![alt text](img/aptdo5/refactor_opcion-registrar-cliente_3.png)
+![alt text](img/aptdo5/refactor_opcion-registrar-cliente_4.png)
+
+Finalmente, se unen la declaración de la variable con la asignación.
+
+![alt text](img/aptdo5/refactor_opcion-registrar-cliente_5.png)
+
+- **Después de refactorizar:** Se muestran los métodos resultantes.
+
+```java
+private static void registrarCliente(Hotel hotel) {
+    String nombre = pedirNombre();
+    String email = pedirEmail();
+    String dni = pedirDni();
+    System.out.println("¿Es VIP? (true/false): ");
+    boolean esVip = scanner.nextBoolean();
+    hotel.registrarCliente(nombre, email, dni, esVip);
+}
+
+private static String pedirDni() {
+    String dni;
+    while (true) {
+        try {
+            System.out.println("Introduce el DNI del cliente: ");
+            dni = scanner.next();
+            Cliente.validarDni(dni);
+            break;
+        } catch (IllegalArgumentException e) {
+            System.out.println("DNI no válido. Inténtalo de nuevo.");
+        }
+    }
+    return dni;
+}
+
+private static String pedirEmail() {
+    String email;
+    while (true) {
+        try {
+            System.out.println("Introduce el email del cliente: ");
+            email = scanner.next();
+            Cliente.validarEmail(email);
+            break;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Email no válido. Inténtalo de nuevo.");
+        }
+    }
+    return email;
+}
+
+private static String pedirNombre() {
+    String nombre;
+    while(true) {
+        try {
+            System.out.println("Introduce el nombre del cliente: ");
+            nombre = scanner.next();
+            Cliente.validarNombre(nombre);
+            break;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Nombre no válido. Inténtalo de nuevo.");
+        }
+    }
+    return nombre;
+}
+```
+
+#### Opción *Salir*
+
+- **Antes de refactorizar:**
+
+![alt text](img/aptdo5/before_opcion-salir.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo5/after_opcion-salir.png)
+
+### Dead Code
+
+La variable `tipo` que aparece al principio del método `main` no se utiliza, por lo que se procede a borrarla.
+
+![alt text](img/aptdo5/eliminar-variable.png)
+
+### Switch statement
+
+Normalmente esto es un code smell, pero en este caso es necesario mantenerlo. Si embargo, vamos a sustituirlo por su versión mejorada:
+
+![alt text](img/aptdo5/before_switch-statement.png)
+![alt text](img/aptdo5/after_switch-statement.png)

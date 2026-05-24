@@ -18,6 +18,22 @@ public class Hotel {
         this.telefono = telefono;
     }
 
+    public static void cargaDeDatos(Hotel hotel) {
+        // Registramos algunas habitaciones
+        hotel.registrarHabitacion("SIMPLE", 50);
+        hotel.registrarHabitacion("DOBLE", 80);
+        hotel.registrarHabitacion("SUITE", 120);
+        hotel.registrarHabitacion("LITERAS", 200);
+        hotel.registrarHabitacion("SIMPLE", 65);
+        hotel.registrarHabitacion("DOBLE", 100);
+        hotel.registrarHabitacion("SUITE", 150);
+        hotel.registrarHabitacion("LITERAS", 250);
+
+        // Registramos algunos clientes
+        hotel.registrarCliente("Daniel", "daniel@daniel.com", "12345678A", true);
+        hotel.registrarCliente("Adrián", "adrian@adrian.es", "87654321B", false);
+    }
+
     // Método para agregar una nueva habitación al hotel
     public void registrarHabitacion(String tipo, double precioBase) {
         Habitacion habitacion = new Habitacion(habitaciones.size() + 1, tipo, precioBase);
