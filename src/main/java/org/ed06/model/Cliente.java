@@ -4,6 +4,7 @@ public class Cliente {
     public static final int    NOMBRE_LONGITUD_MIN    = 3;
     public static final String REGEX_VALIDACION_EMAIL = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
     public static final String REGEX_VALIDACION_DNI   = "[0-9]{8}[A-Z]";
+    public static final double MULTIPLICADOR_PRECIO_FINAL_CLIENTE_VIP = 0.9;
 
     private int     id;
     private String  nombre;
@@ -66,5 +67,17 @@ public class Cliente {
 
     public void setEsVip(boolean esVip) {
         this.esVip = esVip;
+    }
+
+    double aplicarDescuentoClienteVIP(double precioFinal) {
+        // Si el cliente es VIP, aplicamos un descuento del 10%
+        if (isEsVip()) {
+            precioFinal *= MULTIPLICADOR_PRECIO_FINAL_CLIENTE_VIP;
+        }
+        return precioFinal;
+    }
+
+    void mostrarCliente() {
+        System.out.println("Cliente: " + getNombre());
     }
 }

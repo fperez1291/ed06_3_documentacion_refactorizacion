@@ -48,4 +48,8 @@ public class Habitacion {
         }
         disponible = true;
     }
+
+    void mostrarHabitacion() {
+        System.out.println("Habitación #" + getNumero() + " - Tipo: " + getTipo() + " - Precio base: " + getPrecioBase());
+    }
 }

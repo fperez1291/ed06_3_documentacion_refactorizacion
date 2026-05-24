@@ -158,6 +158,162 @@ public Cliente(int id, String nombre, String dni, String email, boolean esVip) {
 
 ## 2. Clase `Reserva`
 
+### Método `calcularPrecioFinal()`
+
+#### Nombre de variables
+
+Se detectan varias variables con nombres ilegibles y poco o nada descriptivos.
+
+- **Antes de refactorizar:**
+
+![Nombres de variables ilegibles y no descriptivos](img/aptdo2/before_nombre-variables.png)
+
+- **Refactorización:** Cambiamos el nombre de las variables a uno más legible y autodescriptivo.
+
+![Refactorizando variables](img/aptdo2/refactor_nombre-variables.png)
+
+- **Después de refactorizar:**
+
+![Comentario muy largo refactorizado](img/aptdo2/after_nombre-variables.png)
+
+#### Comentarios
+
+Se detecta un comentario demasiado largo.
+
+- **Antes de refactorizar:**
+
+![Comentario muy largo](img/aptdo2/before_comentario-largo.png)
+
+- **Refactorización:** Lo convertimos a comentario Javadoc e insertaremos algunos saltos de línea para facilitar la legibilidad.
+
+![Refactorizando el comentario](img/aptdo2/refactor_comentario-largo.png)
+
+- **Después de refactorizar:**
+
+![Comentario muy largo refactorizado](img/aptdo2/after_comentario-largo.png)
+
+También se detectan algunos comentarios redundantes, por lo que se procede a eliminarlos.
+
+- **Antes de refactorizar:**
+
+![Comentario redundante](img/aptdo2/before_comentario-redundante_1.png)
+![Comentario redundante](img/aptdo2/before_comentario-redundante_2.png)
+
+- **Refactorización:** Se eliminan los comentarios.
+- **Después de refactorizar:**
+
+![Comentario redundante eliminado](img/aptdo2/after_comentario-redundante_1.png)
+![Comentario redundante eliminado](img/aptdo2/after_comentario-redundante_2.png)
+
+#### Feature envy
+
+Se detectan dos feature envys al aplicar descuentos. Se extraen ambas, ubicando el cálculo del descuento VIP en la clase `Cliente` y el cálculo del descuento adicional en la clase `Reserva`.
+
+- **Antes de refactorizar:**
+
+![Feature envys sin refactorizar](img/aptdo2/before_feature-envy_1_2.png)
+
+- **Refactorización:** primero extraeremos el método y luego lo ubicaremos en la clase correspondiente.
+  - `Cliente`:
+
+![Extrayendo método](img/aptdo2/refactor_feature-envy_1-1.png)
+![Método extraído](img/aptdo2/refactor_feature-envy_1-2.png)
+
+Ahora lo movemos a la clase correcta:
+
+![Moviendo método](img/aptdo2/refactor_feature-envy_1-3.png)
+
+El método quedará como sigue, pero hace falta refactorizar un poco más:
+
+![Método movido](img/aptdo2/refactor_feature-envy_1-4.png)
+
+Debemos eliminar el parámetro `reserva`, que no sirve para nada, y resolver el magic number.
+
+![Refactorización parámetro reserva](img/aptdo2/refactor_feature-envy_1-5.png)
+![Refactorización magic number](img/aptdo2/refactor_feature-envy_1-6.png)
+
+El método refactorizado queda como sigue:
+
+```java
+double aplicarDescuentoClienteVIP(double precioFinal) {
+    // Si el cliente es VIP, aplicamos un descuento del 10%
+    if (isEsVip()) {
+        precioFinal *= MULTIPLICADOR_PRECIO_FINAL_CLIENTE_VIP;
+    }
+    return precioFinal;
+}
+```
+
+  - `Reserva`: pasamos a realizar el mismo proceso con la segunda feature envy.
+
+![Extrayendo método](img/aptdo2/refactor_feature-envy_2-1.png)
+![Método extraído](img/aptdo2/refactor_feature-envy_2-2.png)
+
+El método quedará como sigue, pero hace falta refactorizar un poco más:
+
+![Método extraido](img/aptdo2/refactor_feature-envy_2-3.png)
+
+Debemos resolver los magic number.
+
+![Refactorización primer magic number](img/aptdo2/refactor_feature-envy_2-4.png)
+![Primer magic number refactorizado](img/aptdo2/refactor_feature-envy_2-5.png)
+![Segundo magic number refactorizado](img/aptdo2/refactor_feature-envy_2-6.png)
+
+El método refactorizado queda como sigue:
+
+```java
+private static double aplicarDescuentoAdicional(int numDiasReserva, double precioFinal) {
+    // Si el intervalo de fechas es mayor a 7 días, aplicamos un descuento adicional del 5%
+    if (numDiasReserva > LIM_DIAS_RESERVA_SIN_DESCUENTO_ADICIONAL) {
+        precioFinal *= MULTIPLICADOR_PRECIO_FINAL_CON_DESCUENTO_ADICIONAL;
+    }
+    return precioFinal;
+}
+```
+
+### Método `mostrarReserva()`
+
+#### Feature envy
+
+En este método se detectan varias feature envys a resolver.
+
+![Feature envys sin refactorizar](img/aptdo2/before_feature-envy_3_4.png)
+
+Primero. extraemos el `println` de la habitación:
+
+![Extrayendo método](img/aptdo2/refactor_feature-envy_3-1.png)
+![Método extraido](img/aptdo2/refactor_feature-envy_3-2.png)
+![Moviendo método](img/aptdo2/refactor_feature-envy_3-3.png)
+![Método movido](img/aptdo2/refactor_feature-envy_3-4.png)
+
+Primero. extraemos el `println` de la habitación:
+
+![Extrayendo método](img/aptdo2/refactor_feature-envy_4-1.png)
+![Método extraido](img/aptdo2/refactor_feature-envy_4-2.png)
+![Moviendo método](img/aptdo2/refactor_feature-envy_4-3.png)
+![Método movido](img/aptdo2/refactor_feature-envy_4-4.png)
+
+Es necesario eliminar el parámetro `reserva`, pues no cumple ningún rol.
+
+![Eliminando parámetro](img/aptdo2/refactor_feature-envy_4-5.png)
+![Parámetro eliminado](img/aptdo2/after_feature-envy_4.png)
+
+#### Eliminando redundancias
+
+Al imprimir las fechas de inicio y fin se usa el método `toString()`, pero este método se puede eliminar dado que `println` invoca al método `toString()` de los objetos que recibe por defecto.
+
+- **Antes de refactorizar:**
+
+![Redundancia antes de refactorizar](img/aptdo2/before_eliminando-redundancias.png)
+
+- **Después de refactorizar:**
+
+![Redundancia refactorizada](img/aptdo2/after_eliminando-redundancias.png)
+
+### Dead Code
+
+En la clase se detectan varios métodos que nunca se utilizan, pero se asume que han sido implementados como deuda técnica a futuro.
+
 ## 3. Clase `Habitacion`
 
 Se ha detectado un code smell de tipo Object-Oriented Abuser en la línea 36. El siguiente fragmento de código muestra un switch statement que indica que el código no está utilizando correctamente la herencia o el polimorfismo.
