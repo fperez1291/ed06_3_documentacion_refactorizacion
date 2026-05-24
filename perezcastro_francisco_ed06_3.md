@@ -316,7 +316,9 @@ En la clase se detectan varios métodos que nunca se utilizan, pero se asume que
 
 ## 3. Clase `Habitacion`
 
-Se ha detectado un code smell de tipo Object-Oriented Abuser en la línea 36. El siguiente fragmento de código muestra un switch statement que indica que el código no está utilizando correctamente la herencia o el polimorfismo.
+### Object-Oriented Abuser: `switch` statement
+
+Se ha detectado un code smell de tipo Object-Oriented Abuser en la línea 36. El siguiente fragmento de código muestra un `switch` statement que indica que el código no está utilizando correctamente la herencia o el polimorfismo.
 
 ```java
 // Método que usa un switch para determinar el número máximo de huéspedes
@@ -333,9 +335,15 @@ public double obtenerNumMaxHuespedes() {
 
 Además, este método no se utiliza nunca, tal y como se puede ver en la imagen siguiente (está marcado con `no usages`).
 
-![Método obtenerNumMaxHuespedes](img/aptdo3/metodo-obtenerNumMaxHuespedes.png)
+![Método obtenerNumMaxHuespedes](img/aptdo3/metodo_obtenerNumMaxHuespedes.png)
 
-Finalmente, tenemos el método `reservar()`, cuyo aspecto es un tanto sospechoso. Sion embargo, en el mismo código hay un comentario que nos indica que la forma de festionar la disponibilidad de una habitación está pendiente de modificaciones. Por ahora, no vamos a considerar acciones sobre dicho método.
+Esto viene acompañado de otro code smell: el **primitive obsession**, pues el tipo de habitación se está modelando con un `String`. Para solucionarlo, vamos a extraer una interfaz
+
+**¡¡PENDIENTE DE TERMINAR!!**
+
+### Método `reservar()`
+
+El método `reservar()` tiene aspecto es un tanto sospechoso. Sin embargo, en el mismo código hay un comentario que nos indica que la forma de gestionar la disponibilidad de una habitación está pendiente de modificaciones. Por ahora, no vamos a considerar acciones sobre dicho método.
 
 ```java
 public void reservar() {
@@ -384,5 +392,119 @@ Analizando más en detalle el método `registrarHabitaciones(List<String> tipos,
 - **Después de refactorizar:**
 
 ![Método registrarHabitaciones refactorizado](img/aptdo4/after_registrarHabitaciones.png)
+
+Por otra parte, en el método `listarHabitacionesDisponibles()` tenemos que el contenido dentro de la sentencia `if` se corresponde con el contenido del método `mostrarHabitacion` que obtuvimos como resultado de una refactorización previa. Por tanto, sustituimos dicha línea por la llamada la método y listo.
+
+- **Antes de refactorizar:**
+
+![Método sin refactorizar](img/aptdo4/before_listarHabitacionesDisponibles.png)
+
+- **Después de refactorizar:**
+
+![Método refactorizado](img/aptdo4/after_listarHabitacionesDisponibles.png)
+
+### Método `listarReservas()`
+
+En este método vemos claramente un feature envy, por lo que para solucionarlo extraeremos el método y luego lo moveremos a la clase `Reserva`.
+
+- **Antes de refactorizar:**
+
+![Método sin refactorizar](img/aptdo4/before_listarReservas.png)
+
+- **Refactorización:** Usando el atajo de teclado `Ctrl+Alt+Shift+T` accedemos a la opción `Refactor This...`: 
+
+![alt text](img/aptdo4/refactor_listarReservas_1.png)
+![alt text](img/aptdo4/refactor_listarReservas_2.png)
+
+Ahora borramos la palabra clave `static` y lo movemos a la clase `Reserva`.
+
+![alt text](img/aptdo4/refactor_listarReservas_3.png)
+![alt text](img/aptdo4/refactor_listarReservas_4.png)
+![alt text](img/aptdo4/refactor_listarReservas_5.png)
+
+Para finalizar, podemos renombrar el método a `toString()` y marcamos el método con el `@Override`, obteniendo el método refactorizado.
+
+![alt text](img/aptdo4/refactor_listarReservas_6.png)
+![alt text](img/aptdo4/refactor_listarReservas_7.png)
+![alt text](img/aptdo4/refactor_listarReservas_8.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo4/after_listarReservas.png)
+
+### Método `listarClientes()`
+
+En este método vemos claramente un feature envy, por lo que para solucionarlo extraeremos el método y luego lo moveremos a la clase `Cliente`.
+
+- **Antes de refactorizar:**
+
+![Método sin refactorizar](img/aptdo4/before_listarClientes.png)
+
+- **Refactorización:** Usando el atajo de teclado `Ctrl+Alt+Shift+T` accedemos a la opción `Refactor This...`: 
+
+![alt text](img/aptdo4/refactor_listarClientes_1.png)
+![alt text](img/aptdo4/refactor_listarClientes_2.png)
+
+Ahora borramos la palabra clave `static` y lo movemos a la clase `Reserva`.
+
+![alt text](img/aptdo4/refactor_listarClientes_3.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo4/refactor_listarClientes_4.png)
+
+### Método `reservarHabitacion`
+
+Echando un vistazo al código, podemos ver varios code smells. Uno de ellos, el más rápido de identificar, es el tamaño del método.
+
+#### Comentarios
+
+El primer comentario deeb ser transformado a un comentario de Javadoc.
+
+![alt](img/aptdo4/before_comentario-largo.png)
+![alt](img/aptdo4/refactor_comentario-largo.png)
+![alt](img/aptdo4/after_comentario-largo.png)
+
+También se detectan varios comentarios redundantes que se eliminarán. Son un total de 4 comentarios que no se documentarán por motivos de tiempo.
+
+#### Early return
+
+El método consta de varias sentencias `if` anidadas, de las cuales las 3 primeras se pueden invertir, aplicando así el `Early return`.
+
+- **Antes de refactorizar:**
+
+![alt text](img/aptdo4/before_early-return.png)
+
+- **Refactorización:** Se aplica el mismo método a los 3 primeros `if` del método.
+
+![alt text](img/aptdo4/refactor_if-inversion_early-return.png)
+
+Al aplicar el cambio, se mantiene la cláusula `else`. Para eliminar los `else` redundantes, procedemos aplicando la opción mostrada a continuación.
+
+![alt text](img/aptdo4/refactor_redundant-else_early-return.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo4/after_early-return.png)
+
+#### Extracción de métodos
+
+Hay dos fragmentos del método que podemos extraer, creando un nuevo método.
+
+- **Antes de refactorizar:**
+
+![alt text](img/aptdo4/before_extraer-metodos.png)
+
+- **Refactorización:**
+
+![alt text](img/aptdo4/refactor_extraer-metodo_1.png)
+![alt text](img/aptdo4/refactor_extraer-metodo_2.png)
+
+- **Después de refactorizar:**
+
+![alt text](img/aptdo4/after_extraer-metodo_1.png)
+![alt text](img/aptdo4/after_extraer-metodo_2.png)
+
+Estos dos métodos contienen cada uno un encadenamiento de llamadas, pero en esta clase tiene sentido que se encadenen algunas operaciones, por lo que se dejan como están.
 
 ## 5. Clase `Main`

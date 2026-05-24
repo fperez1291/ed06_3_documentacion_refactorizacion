@@ -80,4 +80,8 @@ public class Cliente {
     void mostrarCliente() {
         System.out.println("Cliente: " + getNombre());
     }
+
+    void mostrarDatosCliente() {
+        System.out.println("Cliente #" + getId() + " - Nombre: " + getNombre() + " - DNI: " + getDni() + " - VIP: " + isEsVip());
+    }
 }

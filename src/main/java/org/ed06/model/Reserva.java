@@ -83,4 +83,10 @@ public class Reserva {
         System.out.printf("Precio total: %.2f €\n", precioTotal);
     }
 
+    @Override
+    public String toString() {
+        return "Reserva #" + getId() + " - Cliente: " + getCliente().getNombre()
+                + " - Fecha de entrada: " + getFechaInicio()
+                + " - Fecha de salida: " + getFechaFin();
+    }
 }
