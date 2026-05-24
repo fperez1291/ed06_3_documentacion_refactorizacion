@@ -337,9 +337,7 @@ Además, este método no se utiliza nunca, tal y como se puede ver en la imagen 
 
 ![Método obtenerNumMaxHuespedes](img/aptdo3/metodo_obtenerNumMaxHuespedes.png)
 
-Esto viene acompañado de otro code smell: el **primitive obsession**, pues el tipo de habitación se está modelando con un `String`. Para solucionarlo, vamos a extraer una interfaz
-
-**¡¡PENDIENTE DE TERMINAR!!**
+Esto viene acompañado de otro code smell: el **primitive obsession**, pues el tipo de habitación se está modelando con un `String`. Basándonos en que el método no se utiliza, simplemente lo eliminaremos y listo.
 
 ### Método `reservar()`
 

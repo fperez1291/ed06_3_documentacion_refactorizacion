@@ -31,17 +31,6 @@ public class Habitacion {
         return disponible;
     }
 
-    // Método que usa un switch para determinar el número máximo de huéspedes
-    public double obtenerNumMaxHuespedes() {
-        return switch (tipo) {
-            case "SIMPLE" -> 1;
-            case "DOBLE" -> 3;
-            case "SUITE" -> 4;
-            case "LITERAS" -> 8;
-            default -> 1;
-        };
-    }
-
     public void reservar() {
         if (disponible) {
             System.out.println("Habitación #" + numero + " ya reservada");
